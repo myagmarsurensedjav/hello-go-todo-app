@@ -4,7 +4,7 @@ A basic todo web app on Go.
 
 # Todo
 
-- [ ] Landing Page
+- [x] Landing Page
 - [ ] Register
 - [ ] Login
 - [ ] Add task
