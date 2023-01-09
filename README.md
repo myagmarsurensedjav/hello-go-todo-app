@@ -15,3 +15,7 @@ A basic todo web app on Go.
 - [ ] User Profile
 - [ ] User Statistics /Total tasks, Done tasks, Tasks per week etc .../
 - [ ] Terms and conditions page
+
+# Development
+
+Install `https://github.com/golang-migrate/migrate` cli tool to run database migrations.
