@@ -14,3 +14,4 @@ A basic todo web app on Go.
 - [ ] Mark all tasks as done at once
 - [ ] User Profile
 - [ ] User Statistics /Total tasks, Done tasks, Tasks per week etc .../
+- [ ] Terms and conditions page

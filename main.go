@@ -16,6 +16,7 @@ func registerRoutes(r *mux.Router) {
 	r.HandleFunc("/login", handler.Login).Methods("POST")
 
 	r.HandleFunc("/register", handler.ShowRegisterForm).Methods("Get")
+	r.HandleFunc("/register", handler.Register).Methods("Post")
 }
 
 func main() {

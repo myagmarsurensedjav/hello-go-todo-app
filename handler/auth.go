@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/asaskevich/govalidator"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -38,5 +39,36 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 func ShowRegisterForm(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/auth/register.html"))
-	tmpl.Execute(w, nil)
+	tmpl.Execute(w, map[string]interface{}{
+		"errorMessage": middleware.GetErrorMessage(r),
+	})
+}
+
+type RegisterFormData struct {
+	Email    string `valid:"email,required"`
+	Password string `valid:"length(6|20),required"`
+}
+
+func Register(w http.ResponseWriter, r *http.Request) {
+	data := RegisterFormData{
+		Email:    r.FormValue("email"),
+		Password: r.FormValue("password"),
+	}
+
+	// Validate form data
+	if _, err := govalidator.ValidateStruct(&data); err != nil {
+		middleware.SetErrorMessage(w, err.Error())
+		http.Redirect(w, r, "/register", http.StatusSeeOther)
+		return
+	}
+
+	// Password should be the same as password confirmation
+	if data.Password != r.FormValue("password_confirmation") {
+		middleware.SetErrorMessage(w, "Password confirmation does not match")
+		http.Redirect(w, r, "/register", http.StatusSeeOther)
+		return
+	}
+
+	// Redirect to login page
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
