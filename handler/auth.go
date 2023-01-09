@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"fmt"
 	"hello-go-todo-app/middleware"
 	"html/template"
 	"net/http"
@@ -9,6 +10,16 @@ import (
 	"github.com/asaskevich/govalidator"
 	_ "github.com/go-sql-driver/mysql"
 )
+
+func openDB() *sql.DB {
+	db, err := sql.Open("mysql", "root:secret@(localhost:3306)/go-todo?parseTime=true")
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return db
+}
 
 func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/auth/login.html"))
@@ -18,24 +29,40 @@ func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+type User struct {
+	ID       int
+	Email    string
+	Password string
+}
+
 func Login(w http.ResponseWriter, r *http.Request) {
-	email := r.FormValue("email")
-	password := r.FormValue("password")
+	db := openDB()
+	defer db.Close()
 
-	// Attempt to login with email and password
-	if email == "admin@example.com" && password == "secret1234" {
-		http.SetCookie(w, &http.Cookie{
-			Name:  "session",
-			Value: "logged_in",
-		})
+	var user User
+	err := db.QueryRow("SELECT id, email, password FROM users WHERE email = ?", r.FormValue("email")).Scan(&user.ID, &user.Email, &user.Password)
 
-		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+	// Check if user exists
+	if err != nil {
+		middleware.SetErrorMessage(w, "Could not find user with that email")
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
-	// Redirect back with error message
-	middleware.SetErrorMessage(w, "Invalid email or password")
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	// Check if password is correct
+	if user.Password != r.FormValue("password") {
+		// Redirect back with error message
+		middleware.SetErrorMessage(w, "Invalid email or password")
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:  "user_id",
+		Value: fmt.Sprintf("%d", user.ID),
+	})
+
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
 
 func ShowRegisterForm(w http.ResponseWriter, r *http.Request) {
