@@ -2,12 +2,11 @@
 
 A basic todo web app on Go.
 
-# Todo
+# Roadmap
 
 - [x] Landing Page
 - [ ] Register
 - [ ] Login
-- [ ] Implement view layouts /default, auth etc .../
 - [ ] Add task
 - [ ] Remove task
 - [ ] Mark task as done
@@ -15,6 +14,12 @@ A basic todo web app on Go.
 - [ ] User Profile
 - [ ] User Statistics /Total tasks, Done tasks, Tasks per week etc .../
 - [ ] Terms and conditions page
+
+# Todo
+
+- [ ] Implement view layouts /default, auth etc .../
+- [ ] Check the registering email that exists.
+- [ ] Config for database secrets
 
 # Development
 
