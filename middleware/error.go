@@ -17,17 +17,36 @@ func ErrorMessageMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
+		UnsetErrorMessage(w)
+
 		// Set error message to context
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, "error_message", errorMessageCookie.Value)
-
-		// Delete error message cookie
-		http.SetCookie(w, &http.Cookie{
-			Name:   errorMessageKey,
-			Value:  "",
-			MaxAge: -1,
-		})
-
 		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func SetErrorMessage(w http.ResponseWriter, message string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:  errorMessageKey,
+		Value: message,
+	})
+}
+
+func GetErrorMessage(r *http.Request) string {
+	errorMessage, ok := r.Context().Value(errorMessageKey).(string)
+
+	if !ok {
+		return ""
+	}
+
+	return errorMessage
+}
+
+func UnsetErrorMessage(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:   errorMessageKey,
+		Value:  "",
+		MaxAge: -1,
 	})
 }

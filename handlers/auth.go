@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"hello-go-todo-app/middleware"
 	"html/template"
 	"net/http"
 
@@ -13,16 +14,10 @@ type User struct {
 }
 
 func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
-	errorMessage, ok := r.Context().Value("error_message").(string)
-
-	if !ok {
-		errorMessage = ""
-	}
-
 	tmpl := template.Must(template.ParseFiles("views/auth/login.html"))
 
 	tmpl.Execute(w, map[string]interface{}{
-		"errorMessage": errorMessage,
+		"errorMessage": middleware.GetErrorMessage(r),
 	})
 }
 
@@ -41,11 +36,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Error message should be used in the next request
-	http.SetCookie(w, &http.Cookie{
-		Name:  "error_message",
-		Value: "Invalid email or password",
-	})
+	middleware.SetErrorMessage(w, "Invalid email or password")
 
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
