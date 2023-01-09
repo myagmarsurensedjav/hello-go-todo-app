@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"hello-go-todo-app/middleware"
 	"html/template"
 	"net/http"
@@ -67,6 +68,21 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		middleware.SetErrorMessage(w, "Password confirmation does not match")
 		http.Redirect(w, r, "/register", http.StatusSeeOther)
 		return
+	}
+
+	db, err := sql.Open("mysql", "root:secret@(localhost:3306)/go-todo?parseTime=true")
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	defer db.Close()
+
+	// Insert user to database
+	_, err = db.Exec("INSERT INTO users (email, password) VALUES (?, ?)", data.Email, data.Password)
+
+	if err != nil {
+		panic(err.Error())
 	}
 
 	// Redirect to login page
