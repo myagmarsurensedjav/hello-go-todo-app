@@ -14,7 +14,7 @@ type User struct {
 }
 
 func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("views/auth/login.html"))
+	tmpl := template.Must(template.ParseFiles("templates/auth/login.html"))
 
 	tmpl.Execute(w, map[string]interface{}{
 		"errorMessage": middleware.GetErrorMessage(r),
@@ -42,6 +42,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func ShowRegisterForm(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("views/auth/register.html"))
+	tmpl := template.Must(template.ParseFiles("templates/auth/register.html"))
 	tmpl.Execute(w, nil)
 }
