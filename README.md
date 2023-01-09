@@ -5,8 +5,9 @@ A basic todo web app on Go.
 # Roadmap
 
 - [x] Landing Page
-- [ ] Register
+- [x] Register
 - [ ] Login
+- [ ] Logout
 - [ ] Add task
 - [ ] Remove task
 - [ ] Mark task as done

@@ -17,6 +17,8 @@ func registerRoutes(r *mux.Router) {
 
 	r.HandleFunc("/register", handler.ShowRegisterForm).Methods("Get")
 	r.HandleFunc("/register", handler.Register).Methods("Post")
+
+	r.HandleFunc("/dashboard", middleware.AuthMiddleware(handler.ShowDashboard)).Methods("Get")
 }
 
 func main() {
