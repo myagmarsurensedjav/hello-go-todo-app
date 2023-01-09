@@ -13,21 +13,10 @@ type User struct {
 }
 
 func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
-	// Get error message from cookie
-	errorMessageCookie, err := r.Cookie("error_message")
+	errorMessage, ok := r.Context().Value("error_message").(string)
 
-	// Delete error message cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:   "error_message",
-		MaxAge: -1,
-	})
-
-	var errorMessage string
-
-	if err != nil {
+	if !ok {
 		errorMessage = ""
-	} else {
-		errorMessage = errorMessageCookie.Value
 	}
 
 	tmpl := template.Must(template.ParseFiles("views/auth/login.html"))
