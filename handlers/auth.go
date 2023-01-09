@@ -1,10 +1,7 @@
 package handlers
 
 import (
-	"database/sql"
-	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -16,35 +13,52 @@ type User struct {
 }
 
 func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
+	// Get error message from cookie
+	errorMessageCookie, err := r.Cookie("error_message")
+
+	// Delete error message cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:   "error_message",
+		MaxAge: -1,
+	})
+
+	var errorMessage string
+
+	if err != nil {
+		errorMessage = ""
+	} else {
+		errorMessage = errorMessageCookie.Value
+	}
+
 	tmpl := template.Must(template.ParseFiles("views/auth/login.html"))
-	tmpl.Execute(w, nil)
+
+	tmpl.Execute(w, map[string]interface{}{
+		"errorMessage": errorMessage,
+	})
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	fmt.Printf("%s %s", email, password)
+	if email == "admin@example.com" && password == "secret1234" {
+		http.SetCookie(w, &http.Cookie{
+			Name:  "session",
+			Value: "logged_in",
+		})
 
-	db, err := sql.Open("mysql", "root:secret@(localhost:3306)/go-todo?parseTime=true")
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 
-	defer db.Close()
-
-	if err != nil {
-		log.Fatal(err)
+		return
 	}
 
-	var user User
+	// Error message should be used in the next request
+	http.SetCookie(w, &http.Cookie{
+		Name:  "error_message",
+		Value: "Invalid email or password",
+	})
 
-	{
-		err := db.QueryRow("SELECT email, password FROM users WHERE email = ?", email).Scan(&user.email, &user.password)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	fmt.Fprintf(w, "%#v", user)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
 func ShowRegisterForm(w http.ResponseWriter, r *http.Request) {
