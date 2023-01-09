@@ -6,7 +6,7 @@ A basic todo web app on Go.
 
 - [x] Landing Page
 - [x] Register
-- [ ] Login
+- [x] Login
 - [ ] Logout
 - [ ] Add task
 - [ ] Remove task
