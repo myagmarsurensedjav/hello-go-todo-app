@@ -97,20 +97,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := sql.Open("mysql", "root:secret@(localhost:3306)/go-todo?parseTime=true")
-
-	if err != nil {
-		panic(err.Error())
-	}
-
+	db := openDB()
 	defer db.Close()
 
 	// Insert user to database
-	_, err = db.Exec("INSERT INTO users (email, password) VALUES (?, ?)", data.Email, data.Password)
-
-	if err != nil {
-		panic(err.Error())
-	}
+	db.Exec("INSERT INTO users (email, password) VALUES (?, ?)", data.Email, data.Password)
 
 	// Redirect to login page
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
