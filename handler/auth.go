@@ -8,11 +8,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type User struct {
-	email    string
-	password string
-}
-
 func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/auth/login.html"))
 
@@ -25,6 +20,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
+	// Attempt to login with email and password
 	if email == "admin@example.com" && password == "secret1234" {
 		http.SetCookie(w, &http.Cookie{
 			Name:  "session",
@@ -32,12 +28,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		})
 
 		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
-
 		return
 	}
 
+	// Redirect back with error message
 	middleware.SetErrorMessage(w, "Invalid email or password")
-
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
