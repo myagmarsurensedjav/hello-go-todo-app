@@ -13,7 +13,9 @@ func registerRoutes(r *mux.Router) {
 	r.HandleFunc("/", handler.ShowLandingPage).Methods("Get")
 
 	r.HandleFunc("/login", handler.ShowLoginForm).Methods("Get")
-	r.HandleFunc("/login", handler.Login).Methods("POST")
+	r.HandleFunc("/login", handler.Login).Methods("Post")
+
+	r.HandleFunc("/logout", handler.Logout).Methods("Post")
 
 	r.HandleFunc("/register", handler.ShowRegisterForm).Methods("Get")
 	r.HandleFunc("/register", handler.Register).Methods("Post")

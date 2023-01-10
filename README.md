@@ -23,6 +23,7 @@ A basic todo web app on Go.
 - [ ] Config for database secrets
 - [ ] Cookie encryption
 - [ ] Password hashing
+- [ ] Implement CSRF
 
 # Development
 

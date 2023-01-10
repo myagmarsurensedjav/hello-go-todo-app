@@ -65,6 +65,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
 
+func Logout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:   "user_id",
+		MaxAge: -1,
+	})
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
 func ShowRegisterForm(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/auth/register.html"))
 	tmpl.Execute(w, map[string]interface{}{
