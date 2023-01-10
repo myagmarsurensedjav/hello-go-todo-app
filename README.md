@@ -8,9 +8,9 @@ A basic todo web app on Go.
 - [x] Register
 - [x] Login
 - [x] Logout
-- [ ] Add task
-- [ ] Remove task
-- [ ] Mark task as done
+- [x] Add task
+- [x] Remove task
+- [x] Mark task as done
 - [ ] Mark all tasks as done at once
 - [ ] User Profile
 - [ ] User Statistics /Total tasks, Done tasks, Tasks per week etc .../
