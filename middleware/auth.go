@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"strconv"
 )
 
 func AuthMiddleware(next func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
@@ -20,4 +21,9 @@ func AuthMiddleware(next func(http.ResponseWriter, *http.Request)) func(http.Res
 		ctx = context.WithValue(ctx, "user_id", userId)
 		next(w, r.WithContext(ctx))
 	})
+}
+
+func GetUserId(r *http.Request) int {
+	userId, _ := strconv.Atoi(r.Context().Value("user_id").(string))
+	return userId
 }
