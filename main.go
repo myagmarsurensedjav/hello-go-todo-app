@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"hello-go-todo-app/db"
 	"hello-go-todo-app/handler"
 	"hello-go-todo-app/middleware"
 
@@ -31,6 +32,13 @@ func main() {
 
 	// Register routes
 	registerRoutes(r)
+
+	// Init DB
+	err := db.InitDB()
+	if err != nil {
+		panic(err)
+	}
+	defer db.GetDB().Close()
 
 	http.ListenAndServe(":8080", r)
 }

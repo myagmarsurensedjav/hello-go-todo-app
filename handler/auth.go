@@ -1,25 +1,14 @@
 package handler
 
 import (
-	"database/sql"
 	"fmt"
+	"hello-go-todo-app/db"
 	"hello-go-todo-app/middleware"
 	"html/template"
 	"net/http"
 
 	"github.com/asaskevich/govalidator"
-	_ "github.com/go-sql-driver/mysql"
 )
-
-func openDB() *sql.DB {
-	db, err := sql.Open("mysql", "root:secret@(localhost:3306)/go-todo?parseTime=true")
-
-	if err != nil {
-		panic(err.Error())
-	}
-
-	return db
-}
 
 func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/auth/login.html"))
@@ -36,11 +25,8 @@ type User struct {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	db := openDB()
-	defer db.Close()
-
 	var user User
-	err := db.QueryRow("SELECT id, email, password FROM users WHERE email = ?", r.FormValue("email")).Scan(&user.ID, &user.Email, &user.Password)
+	err := db.GetDB().QueryRow("SELECT id, email, password FROM users WHERE email = ?", r.FormValue("email")).Scan(&user.ID, &user.Email, &user.Password)
 
 	// Check if user exists
 	if err != nil {
@@ -106,11 +92,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db := openDB()
-	defer db.Close()
-
 	// Insert user to database
-	db.Exec("INSERT INTO users (email, password) VALUES (?, ?)", data.Email, data.Password)
+	db.GetDB().Exec("INSERT INTO users (email, password) VALUES (?, ?)", data.Email, data.Password)
 
 	// Redirect to login page
 	http.Redirect(w, r, "/login", http.StatusSeeOther)

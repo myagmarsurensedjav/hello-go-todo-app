@@ -24,6 +24,7 @@ A basic todo web app on Go.
 - [ ] Cookie encryption
 - [ ] Password hashing
 - [ ] Implement CSRF
+- [ ] Database connection pool
 
 # Development
 
