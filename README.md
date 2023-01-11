@@ -22,7 +22,7 @@ A basic todo web app on Go.
 - [ ] Check the registering email that exists.
 - [ ] Config for database secrets
 - [ ] Cookie encryption
-- [ ] Password hashing
+- [x] Password hashing
 - [ ] Implement CSRF
 - [ ] Database connection pool
 

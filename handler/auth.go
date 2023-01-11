@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"hello-go-todo-app/db"
+	"hello-go-todo-app/hash"
 	"hello-go-todo-app/middleware"
 	"html/template"
 	"net/http"
@@ -25,6 +26,8 @@ type User struct {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
+	passwordInputValue := r.FormValue("password")
+
 	var user User
 	err := db.GetDB().QueryRow("SELECT id, email, password FROM users WHERE email = ?", r.FormValue("email")).Scan(&user.ID, &user.Email, &user.Password)
 
@@ -36,7 +39,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if password is correct
-	if user.Password != r.FormValue("password") {
+	if !hash.CheckPasswordHash(passwordInputValue, user.Password) {
 		// Redirect back with error message
 		middleware.SetErrorMessage(w, "Invalid email or password")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -93,7 +96,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Insert user to database
-	db.GetDB().Exec("INSERT INTO users (email, password) VALUES (?, ?)", data.Email, data.Password)
+	db.GetDB().Exec("INSERT INTO users (email, password) VALUES (?, ?)", data.Email, hash.HashPassword(data.Password))
 
 	// Redirect to login page
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
