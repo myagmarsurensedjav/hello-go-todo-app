@@ -2,9 +2,9 @@ package handler
 
 import (
 	"fmt"
-	"hello-go-todo-app/db"
 	"hello-go-todo-app/hash"
 	"hello-go-todo-app/middleware"
+	"hello-go-todo-app/model"
 	"html/template"
 	"net/http"
 
@@ -19,17 +19,10 @@ func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type User struct {
-	ID       int
-	Email    string
-	Password string
-}
-
 func Login(w http.ResponseWriter, r *http.Request) {
 	passwordInputValue := r.FormValue("password")
 
-	var user User
-	err := db.GetDB().QueryRow("SELECT id, email, password FROM users WHERE email = ?", r.FormValue("email")).Scan(&user.ID, &user.Email, &user.Password)
+	user, err := model.GetUserByEmail(r.FormValue("email"))
 
 	// Check if user exists
 	if err != nil {
@@ -95,8 +88,13 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Insert user to database
-	db.GetDB().Exec("INSERT INTO users (email, password) VALUES (?, ?)", data.Email, hash.HashPassword(data.Password))
+	err := model.InsertUser(data.Email, hash.HashPassword(data.Password))
+
+	if err != nil {
+		middleware.SetErrorMessage(w, err.Error())
+		http.Redirect(w, r, "/register", http.StatusSeeOther)
+		return
+	}
 
 	// Redirect to login page
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
