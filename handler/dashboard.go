@@ -5,6 +5,8 @@ import (
 	"hello-go-todo-app/model"
 	"html/template"
 	"net/http"
+
+	"github.com/gorilla/csrf"
 )
 
 func ShowDashboard(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +27,8 @@ func ShowDashboard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.ExecuteTemplate(w, "base", map[string]interface{}{
-		"tasks": tasks,
-		"user":  user,
+		"tasks":          tasks,
+		"user":           user,
+		csrf.TemplateTag: csrf.TemplateField(r),
 	})
 }

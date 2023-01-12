@@ -8,13 +8,15 @@ import (
 	"net/http"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/gorilla/csrf"
 )
 
 func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/auth/login.html"))
 
 	tmpl.Execute(w, map[string]interface{}{
-		"errorMessage": middleware.GetErrorMessage(r),
+		"errorMessage":   middleware.GetErrorMessage(r),
+		csrf.TemplateTag: csrf.TemplateField(r),
 	})
 }
 
@@ -51,7 +53,8 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 func ShowRegisterForm(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/auth/register.html"))
 	tmpl.Execute(w, map[string]interface{}{
-		"errorMessage": middleware.GetErrorMessage(r),
+		"errorMessage":   middleware.GetErrorMessage(r),
+		csrf.TemplateTag: csrf.TemplateField(r),
 	})
 }
 

@@ -7,6 +7,7 @@
         <li class="py-3 border-t">
             <div class="flex items-center justify-between">
                 <form id="task-{{.ID}}-form" method="POST" action="/tasks/{{.ID}}/done">
+                    {{$.csrfField}}
                     <div class="flex">
                         <div class="w-8">
                             {{if .IsDone}}
@@ -30,6 +31,7 @@
 
                 <div>
                     <form action="/tasks/{{.ID}}/remove" method="POST">
+                        {{$.csrfField}}
                         <button>
                             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -45,6 +47,7 @@
 
         <li class="border-t">
             <form class="flex items-center" action="/tasks" method="POST">
+                {{.csrfField}}
                 <div class="w-8">
                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

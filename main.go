@@ -7,6 +7,7 @@ import (
 	"hello-go-todo-app/handler"
 	"hello-go-todo-app/middleware"
 
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 )
 
@@ -44,5 +45,11 @@ func main() {
 	}
 	defer db.GetDB().Close()
 
-	http.ListenAndServe(":8080", r)
+	CSRF := csrf.Protect(
+		[]byte("32-byte-long-auth-key"),
+		csrf.Secure(false),
+		csrf.CookieName("csrf_token"),
+	)
+
+	http.ListenAndServe(":8080", CSRF(r))
 }

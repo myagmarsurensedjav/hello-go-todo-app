@@ -24,7 +24,7 @@ A basic todo web app on Go.
 - [ ] Environment configurations for secrets /session key, database etc .../
 - [x] Cookie encryption and auth sessions
 - [x] Password hashing
-- [ ] Implement CSRF
+- [x] Implement CSRF
 - [ ] Database connection pool
 
 # Development

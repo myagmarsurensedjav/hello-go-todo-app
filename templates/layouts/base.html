@@ -22,7 +22,9 @@
                 <li>
                     <a class="block hover:bg-gray-100 py-2 px-4 rounded-lg cursor-pointer"
                         onclick="document.getElementById('logout-form').submit()">Logout</a>
-                    <form id="logout-form" method="POST" action="/logout"></form>
+                    <form id="logout-form" method="POST" action="/logout">
+                        {{.csrfField}}
+                    </form>
                 </li>
             </ul>
         </div>
