@@ -3,19 +3,23 @@ package middleware
 import (
 	"context"
 	"net/http"
-	"strconv"
+	"os"
+
+	"github.com/gorilla/sessions"
 )
+
+var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
 func AuthMiddleware(next func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		userIdCookie, err := r.Cookie("user_id")
+		session, _ := store.Get(r, "session")
 
-		if err != nil {
+		userId, ok := session.Values["user_id"].(int)
+
+		if !ok || userId == 0 {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
-
-		userId := userIdCookie.Value
 
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, "user_id", userId)
@@ -23,7 +27,24 @@ func AuthMiddleware(next func(http.ResponseWriter, *http.Request)) func(http.Res
 	})
 }
 
+func SetUserAuthSession(w http.ResponseWriter, r *http.Request, userId int) {
+	session, _ := store.Get(r, "session")
+	session.Options.HttpOnly = true
+	session.Options.Secure = true
+	session.Options.SameSite = http.SameSiteStrictMode
+	session.Options.Path = "/"
+	session.Options.MaxAge = 60 * 60 * 24 * 7 // 7 days
+
+	session.Values["user_id"] = userId
+	session.Save(r, w)
+}
+
+func UnsetUserAuthSession(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session")
+	session.Options.MaxAge = -1
+	session.Save(r, w)
+}
+
 func GetUserId(r *http.Request) int {
-	userId, _ := strconv.Atoi(r.Context().Value("user_id").(string))
-	return userId
+	return r.Context().Value("user_id").(int)
 }

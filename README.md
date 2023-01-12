@@ -21,7 +21,7 @@ A basic todo web app on Go.
 - [ ] Implement view layouts /default, auth etc .../
 - [ ] Check the registering email that exists.
 - [ ] Config for database secrets
-- [ ] Cookie encryption
+- [x] Cookie encryption and auth sessions
 - [x] Password hashing
 - [ ] Implement CSRF
 - [ ] Database connection pool

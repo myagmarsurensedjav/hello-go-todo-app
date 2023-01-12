@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"hello-go-todo-app/hash"
 	"hello-go-todo-app/middleware"
 	"hello-go-todo-app/model"
@@ -39,20 +38,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.SetCookie(w, &http.Cookie{
-		Name:  "user_id",
-		Value: fmt.Sprintf("%d", user.ID),
-	})
+	middleware.SetUserAuthSession(w, r, user.ID)
 
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	http.SetCookie(w, &http.Cookie{
-		Name:   "user_id",
-		MaxAge: -1,
-	})
-
+	middleware.UnsetUserAuthSession(w, r)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
