@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"hello-go-todo-app/db"
@@ -29,6 +30,14 @@ func registerRoutes(r *mux.Router) {
 	r.HandleFunc("/tasks/{task}/done", middleware.AuthMiddleware(handler.MarkTaskAsDone)).Methods("Post")
 }
 
+func configureCSRF() mux.MiddlewareFunc {
+	return csrf.Protect(
+		[]byte("32-byte-long-auth-key"),
+		csrf.Secure(false),
+		csrf.CookieName("csrf_token"),
+	)
+}
+
 func main() {
 	r := mux.NewRouter()
 
@@ -38,18 +47,13 @@ func main() {
 	// Register routes
 	registerRoutes(r)
 
+	r.Use(configureCSRF())
+
 	// Init DB
-	err := db.InitDB()
-	if err != nil {
-		panic(err)
+	if err := db.InitDB(); err != nil {
+		log.Fatal(err)
 	}
 	defer db.GetDB().Close()
 
-	CSRF := csrf.Protect(
-		[]byte("32-byte-long-auth-key"),
-		csrf.Secure(false),
-		csrf.CookieName("csrf_token"),
-	)
-
-	http.ListenAndServe(":8080", CSRF(r))
+	http.ListenAndServe(":8080", r)
 }
