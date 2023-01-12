@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"hello-go-todo-app/hash"
 	"hello-go-todo-app/middleware"
 	"hello-go-todo-app/model"
+	"hello-go-todo-app/pkg/hash"
 	"html/template"
 	"net/http"
 
