@@ -27,6 +27,12 @@ A basic todo web app on Go.
 - [x] Implement CSRF
 - [ ] Database connection pool
 
+# Links
+
+- https://peter.bourgon.org/go-best-practices-2016
+- go.dev/talks/2014/names.slide
+- https://dev.to/ilyakaznacheev/a-clean-way-to-pass-configs-in-a-go-application-1g64
+
 # Development
 
 Install `https://github.com/golang-migrate/migrate` cli tool to run database migrations.
