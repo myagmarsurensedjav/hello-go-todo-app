@@ -1,8 +1,9 @@
-package handler
+package web
 
 import (
-	"hello-go-todo-app/middleware"
-	"hello-go-todo-app/model"
+	"hello-go-todo-app/internal/auth"
+	"hello-go-todo-app/internal/task"
+	"hello-go-todo-app/internal/user"
 	"html/template"
 	"net/http"
 
@@ -12,15 +13,15 @@ import (
 func ShowDashboard(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/dashboard/index.html", "templates/layouts/base.html"))
 
-	userId := middleware.GetUserId(r)
+	userId := auth.GetUserId(r)
 
-	user, err := model.GetUserById(userId)
+	user, err := user.GetUserById(userId)
 
 	if err != nil {
 		panic(err)
 	}
 
-	tasks, err := model.GetTasks(userId)
+	tasks, err := task.GetTasks(userId)
 
 	if err != nil {
 		panic(err)

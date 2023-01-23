@@ -1,9 +1,10 @@
-package handler
+package web
 
 import (
-	"hello-go-todo-app/middleware"
-	"hello-go-todo-app/model"
-	"hello-go-todo-app/pkg/hash"
+	"hello-go-todo-app/internal/auth"
+	error2 "hello-go-todo-app/internal/error"
+	"hello-go-todo-app/internal/hash"
+	"hello-go-todo-app/internal/user"
 	"html/template"
 	"net/http"
 
@@ -15,7 +16,7 @@ func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/auth/login.html"))
 
 	tmpl.Execute(w, map[string]interface{}{
-		"errorMessage":   middleware.GetErrorMessage(r),
+		"errorMessage":   error2.GetErrorMessage(r),
 		csrf.TemplateTag: csrf.TemplateField(r),
 	})
 }
@@ -23,37 +24,36 @@ func ShowLoginForm(w http.ResponseWriter, r *http.Request) {
 func Login(w http.ResponseWriter, r *http.Request) {
 	passwordInputValue := r.FormValue("password")
 
-	user, err := model.GetUserByEmail(r.FormValue("email"))
+	user, err := user.GetUserByEmail(r.FormValue("email"))
 
 	// Check if user exists
 	if err != nil {
-		middleware.SetErrorMessage(w, "Could not find user with that email")
+		error2.SetErrorMessage(w, "Could not find user with that email")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
 	// Check if password is correct
 	if !hash.CheckPasswordHash(passwordInputValue, user.Password) {
-		// Redirect back with error message
-		middleware.SetErrorMessage(w, "Invalid email or password")
+		error2.SetErrorMessage(w, "Invalid email or password")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
-	middleware.SetUserAuthSession(w, r, user.ID)
+	auth.SetUserAuthSession(w, r, user.ID)
 
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	middleware.UnsetUserAuthSession(w, r)
+	auth.UnsetUserAuthSession(w, r)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func ShowRegisterForm(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/auth/register.html"))
 	tmpl.Execute(w, map[string]interface{}{
-		"errorMessage":   middleware.GetErrorMessage(r),
+		"errorMessage":   error2.GetErrorMessage(r),
 		csrf.TemplateTag: csrf.TemplateField(r),
 	})
 }
@@ -71,22 +71,22 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	// Validate form data
 	if _, err := govalidator.ValidateStruct(&data); err != nil {
-		middleware.SetErrorMessage(w, err.Error())
+		error2.SetErrorMessage(w, err.Error())
 		http.Redirect(w, r, "/register", http.StatusSeeOther)
 		return
 	}
 
 	// Password should be the same as password confirmation
 	if data.Password != r.FormValue("password_confirmation") {
-		middleware.SetErrorMessage(w, "Password confirmation does not match")
+		error2.SetErrorMessage(w, "Password confirmation does not match")
 		http.Redirect(w, r, "/register", http.StatusSeeOther)
 		return
 	}
 
-	err := model.InsertUser(data.Email, hash.HashPassword(data.Password))
+	err := user.InsertUser(data.Email, hash.HashPassword(data.Password))
 
 	if err != nil {
-		middleware.SetErrorMessage(w, err.Error())
+		error2.SetErrorMessage(w, err.Error())
 		http.Redirect(w, r, "/register", http.StatusSeeOther)
 		return
 	}

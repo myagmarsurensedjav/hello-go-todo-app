@@ -1,4 +1,4 @@
-package model
+package user
 
 import "hello-go-todo-app/db"
 
