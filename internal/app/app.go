@@ -3,8 +3,10 @@ package app
 import (
 	"fmt"
 	"hello-go-todo-app/db"
+	"hello-go-todo-app/internal/config"
 	"hello-go-todo-app/internal/csrf"
 	error2 "hello-go-todo-app/internal/error"
+	"hello-go-todo-app/internal/session"
 	"log"
 	"net/http"
 
@@ -29,6 +31,14 @@ func New() *App {
 }
 
 func (a *App) Start() {
+	err := config.InitConfig()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	session.Init()
+
 	// Init DB
 	if err := db.InitDB(); err != nil {
 		log.Fatal(err)

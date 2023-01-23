@@ -41,7 +41,7 @@
     <div class="flex-1">
         <div class="flex justify-between">
             <div class="font-semibold mb-4">
-                To Do
+                Tasks
                 {{if gt (len .undoneTasks) 0}}
                 ({{len .undoneTasks}})
                 {{end}}
@@ -108,7 +108,7 @@
         {{if gt (len .doneTasks) 0}}
 
         <div class="flex justify-between mt-6">
-            <div class="font-semibold mb-4">Done tasks ({{len .doneTasks}})</div>
+            <div class="font-semibold mb-4">Done ({{len .doneTasks}})</div>
         </div>
 
         <ul>

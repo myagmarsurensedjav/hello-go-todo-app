@@ -2,19 +2,17 @@ package auth
 
 import (
 	"context"
+	"hello-go-todo-app/internal/session"
 	"net/http"
-	"os"
-
-	"github.com/gorilla/sessions"
 )
 
-var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+const userSessionName = "session"
 
 func AuthMiddleware(next func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, _ := store.Get(r, "session")
+		s, _ := session.Get(r, userSessionName)
 
-		userId, ok := session.Values["user_id"].(int)
+		userId, ok := s.Values["user_id"].(int)
 
 		if !ok || userId == 0 {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -28,21 +26,21 @@ func AuthMiddleware(next func(http.ResponseWriter, *http.Request)) func(http.Res
 }
 
 func SetUserAuthSession(w http.ResponseWriter, r *http.Request, userId int) {
-	session, _ := store.Get(r, "session")
-	session.Options.HttpOnly = true
-	session.Options.Secure = true
-	session.Options.SameSite = http.SameSiteStrictMode
-	session.Options.Path = "/"
-	session.Options.MaxAge = 60 * 60 * 24 * 7 // 7 days
+	s, _ := session.Get(r, userSessionName)
+	s.Options.HttpOnly = true
+	s.Options.Secure = true
+	s.Options.SameSite = http.SameSiteStrictMode
+	s.Options.Path = "/"
+	s.Options.MaxAge = 60 * 60 * 24 * 7 // 7 days
 
-	session.Values["user_id"] = userId
-	session.Save(r, w)
+	s.Values["user_id"] = userId
+	s.Save(r, w)
 }
 
 func UnsetUserAuthSession(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "session")
-	session.Options.MaxAge = -1
-	session.Save(r, w)
+	s, _ := session.Get(r, userSessionName)
+	s.Options.MaxAge = -1
+	s.Save(r, w)
 }
 
 func GetUserId(r *http.Request) int {
