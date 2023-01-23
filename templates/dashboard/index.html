@@ -1,62 +1,160 @@
 {{define "content"}}
-<div>
-    <div class="text-xl font-semibold mb-4">To Do List</div>
+<div class="flex space-x-12">
+    <div class="w-1/5">
+        <div class="bg-gray-50 rounded border py-4">
+            <div class="font-bold px-4 mb-2">Projects</div>
+            <ul>
+                <li>
+                    <a href="/dashboard"
+                       {{if eq .currentProject ""}}
+                       class="flex justify-between items-center py-1 px-4 bg-gray-100"
+                       {{else}}
+                       class="flex justify-between items-center py-1 px-4 hover:bg-gray-100"
+                       {{end}}
+                    >
+                        <span>All</span>
+                        <span class="text-sm text-gray-500">{{.allTasksCount}}</span>
+                    </a>
+                </li>
+                {{range .projects}}
+                <li>
+                    <a href="/dashboard?project={{.Name}}"
+                       {{if eq .Name $.currentProject}}
+                       class="flex justify-between items-center py-1 px-4 bg-gray-100"
+                       {{else}}
+                       class="flex justify-between items-center py-1 px-4 hover:bg-gray-100"
+                       {{end}}
+                    >
+                        <span>{{.Name}}</span>
+                        <span class="text-sm text-gray-500">{{.TasksCount}}</span>
+                    </a>
+                </li>
+                {{end}}
+            </ul>
 
-    <ul>
-        {{range .tasks}}
-        <li class="py-3 border-t">
-            <div class="flex items-center justify-between">
-                <form id="task-{{.ID}}-form" method="POST" action="/tasks/{{.ID}}/done">
-                    {{$.csrfField}}
-                    <div class="flex">
-                        <div class="w-8">
-                            {{if .IsDone}}
-                            <input class="mr-3" type="checkbox" checked name="is_done" value="1"
-                                onchange="document.getElementById('task-{{.ID}}-form').submit()" />
-                            {{else}}
-                            <input class="mr-3" type="checkbox" name="is_done" value="1"
-                                onchange="document.getElementById('task-{{.ID}}-form').submit()" />
-                            {{end}}
-                        </div>
-
-                        <div>
-                            {{if .IsDone}}
-                            <span class="line-through">{{.Name}}</span>
-                            {{else}}
-                            {{.Name}}
-                            {{end}}
-                        </div>
-                    </div>
-                </form>
-
-                <div>
-                    <form action="/tasks/{{.ID}}/remove" method="POST">
-                        {{$.csrfField}}
-                        <button>
-                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                            </svg>
-                        </button>
-                    </form>
-                </div>
+            <div class="mt-4 border-t pt-2 px-4 text-sm text-gray-400">
+                Use #project to add a task to a project.
             </div>
-        </li>
-        {{end}}
+        </div>
+    </div>
 
-        <li class="border-t">
-            <form class="flex items-center" action="/tasks" method="POST">
-                {{.csrfField}}
-                <div class="w-8">
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
+    <div class="flex-1">
+        <div class="flex justify-between">
+            <div class="font-semibold mb-4">
+                To Do
+                {{if gt (len .undoneTasks) 0}}
+                ({{len .undoneTasks}})
+                {{end}}
+            </div>
+        </div>
+
+        <ul>
+            {{range .undoneTasks}}
+            <li class="py-3 border-t">
+                <div class="flex items-center justify-between">
+                    <form id="task-{{.ID}}-form" method="POST" action="/tasks/{{.ID}}/done">
+                        {{$.csrfField}}
+                        <div class="flex">
+                            <div class="w-8">
+                                {{if .IsDone}}
+                                <input class="mr-3" type="checkbox" checked name="is_done" value="1"
+                                       onchange="document.getElementById('task-{{.ID}}-form').submit()"/>
+                                {{else}}
+                                <input class="mr-3" type="checkbox" name="is_done" value="1"
+                                       onchange="document.getElementById('task-{{.ID}}-form').submit()"/>
+                                {{end}}
+                            </div>
+
+                            <div>
+                                {{if .IsDone}}
+                                <span class="line-through">{{.Name}}</span>
+                                {{else}}
+                                {{.Name}}
+                                {{end}}
+                            </div>
+                        </div>
+                    </form>
+
+                    <div>
+                        <form action="/tasks/{{.ID}}/remove" method="POST">
+                            {{$.csrfField}}
+                            <button>
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <input class="py-2 w-full outline-0" type="text" name="name" placeholder="Add a task" autofocus />
-            </form>
-        </li>
-    </ul>
+            </li>
+            {{end}}
+
+            <li class="border-t">
+                <form class="flex items-center" action="/tasks" method="POST">
+                    {{.csrfField}}
+                    <div class="w-8">
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                        </svg>
+                    </div>
+                    <input class="py-2 w-full outline-0" type="text" name="name" placeholder="Add a task" autofocus/>
+                </form>
+            </li>
+        </ul>
+
+        {{if gt (len .doneTasks) 0}}
+
+        <div class="flex justify-between mt-6">
+            <div class="font-semibold mb-4">Done tasks ({{len .doneTasks}})</div>
+        </div>
+
+        <ul>
+            {{range .doneTasks}}
+            <li class="py-3 border-t">
+                <div class="flex items-center justify-between">
+                    <form id="task-{{.ID}}-form" method="POST" action="/tasks/{{.ID}}/done">
+                        {{$.csrfField}}
+                        <div class="flex">
+                            <div class="w-8">
+                                {{if .IsDone}}
+                                <input class="mr-3 text-gray-300" type="checkbox" checked name="is_done" value="1"
+                                       onchange="document.getElementById('task-{{.ID}}-form').submit()"/>
+                                {{else}}
+                                <input class="mr-3" type="checkbox" name="is_done" value="1"
+                                       onchange="document.getElementById('task-{{.ID}}-form').submit()"/>
+                                {{end}}
+                            </div>
+
+                            <div>
+                                {{if .IsDone}}
+                                <span class="text-gray-300">{{.Name}}</span>
+                                {{else}}
+                                {{.Name}}
+                                {{end}}
+                            </div>
+                        </div>
+                    </form>
+
+                    <div>
+                        <form action="/tasks/{{.ID}}/remove" method="POST">
+                            {{$.csrfField}}
+                            <button>
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </li>
+            {{end}}
+        </ul>
+        {{end}}
+    </div>
 </div>
 {{end}}

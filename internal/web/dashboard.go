@@ -14,6 +14,7 @@ func ShowDashboard(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/dashboard/index.html", "templates/layouts/base.html"))
 
 	userId := auth.GetUserId(r)
+	currentProject := r.FormValue("project")
 
 	user, err := user.GetUserById(userId)
 
@@ -21,15 +22,36 @@ func ShowDashboard(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	tasks, err := task.GetTasks(userId)
+	var tasks []task.Task
+
+	if currentProject == "" {
+		tasks, err = task.GetTasks(userId)
+	} else {
+		tasks, err = task.GetTasksByProject(userId, currentProject)
+	}
+
+	undoneTasks := task.FilterTasksByStatus(&tasks, false)
+	doneTasks := task.FilterTasksByStatus(&tasks, true)
 
 	if err != nil {
 		panic(err)
 	}
 
+	projects, _ := task.GetProjects(auth.GetUserId(r))
+
+	var allTasksCount int
+
+	for _, project := range projects {
+		allTasksCount += project.TasksCount
+	}
+
 	tmpl.ExecuteTemplate(w, "base", map[string]interface{}{
-		"tasks":          tasks,
+		"undoneTasks":    undoneTasks,
+		"doneTasks":      doneTasks,
 		"user":           user,
+		"projects":       projects,
+		"currentProject": currentProject,
+		"allTasksCount":  allTasksCount,
 		csrf.TemplateTag: csrf.TemplateField(r),
 	})
 }

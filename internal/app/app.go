@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"hello-go-todo-app/db"
 	"hello-go-todo-app/internal/csrf"
 	error2 "hello-go-todo-app/internal/error"
@@ -34,6 +35,8 @@ func (a *App) Start() {
 	}
 
 	defer db.GetDB().Close()
+
+	go fmt.Println("App started on http://0.0.0.0:8080")
 
 	http.ListenAndServe(":8080", a.Router)
 }
