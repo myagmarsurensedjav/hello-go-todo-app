@@ -23,4 +23,6 @@ func registerRoutes(r *mux.Router) {
 	r.HandleFunc("/tasks/{task}/remove", auth.AuthMiddleware(web.RemoveTask)).Methods("Post")
 	r.HandleFunc("/tasks/{task}/done", auth.AuthMiddleware(web.MarkTaskAsDone)).Methods("Post")
 	r.HandleFunc("/tasks/clear", auth.AuthMiddleware(web.ClearDoneTasks)).Methods("Post")
+
+	r.HandleFunc("/profile", auth.AuthMiddleware(web.ShowProfile)).Methods("Get")
 }

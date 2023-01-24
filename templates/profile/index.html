@@ -1,0 +1,49 @@
+{{define "content"}}
+<div class="max-w-2xl mx-auto">
+    <div>
+        <div class="flex items-center px-4 py-4 border-rounded bg-gray-50 mb-4">
+            <div class="rounded-full bg-gray-300 w-14 h-14">
+            </div>
+            <div class="pl-4">
+                <div>{{.User.Email}}</div>
+                <div>
+                    <a href="/profile/edit" class="text-blue-500 text-sm">Edit</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 p-4 mb-4">
+            <canvas id="myChart"></canvas>
+        </div>
+
+        <div class="bg-gray-50 p-4 mb-4">
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('myChart');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{{end}}
