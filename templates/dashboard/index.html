@@ -109,6 +109,14 @@
 
         <div class="flex justify-between mt-6">
             <div class="font-semibold mb-4">Done ({{len .doneTasks}})</div>
+            <div>
+                <form action="/tasks/clear" method="POST">
+                    {{.csrfField}}
+                    <button class="text-sm text-gray-400 hover:text-gray-500">
+                        Clear all
+                    </button>
+                </form>
+            </div>
         </div>
 
         <ul>

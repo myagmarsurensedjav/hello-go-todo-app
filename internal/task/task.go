@@ -88,3 +88,8 @@ func FilterTasksByStatus(tasks *[]Task, isDone bool) []Task {
 
 	return filteredTasks
 }
+
+func ClearDoneTasks(userId int) error {
+	_, err := db.GetDB().Exec("DELETE FROM tasks WHERE user_id = ? and is_done = 1", userId)
+	return err
+}

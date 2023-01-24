@@ -48,3 +48,14 @@ func MarkTaskAsDone(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
+
+func ClearDoneTasks(w http.ResponseWriter, r *http.Request) {
+	err := task.ClearDoneTasks(auth.GetUserId(r))
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/dashboard", http.StatusFound)
+}
