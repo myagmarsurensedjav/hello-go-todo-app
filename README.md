@@ -19,8 +19,8 @@ A basic todo web app on Go.
 
 # Todo
 
-- [ ] Implement view layouts /default, auth etc .../
-- [ ] Check the registering email that exists.
+- [x] Implement view layouts /default, auth etc .../
+- [x] Check the registering email that exists.
 - [x] Environment configurations for secrets /session key, database etc .../
 - [x] Cookie encryption and auth sessions
 - [x] Password hashing

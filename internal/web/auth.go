@@ -83,6 +83,18 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check if user already exists
+	{
+		_, err := user.GetUserByEmail(data.Email)
+
+		if err == nil {
+			error2.SetErrorMessage(w, "User with that email already exists")
+			http.Redirect(w, r, "/register", http.StatusSeeOther)
+			return
+		}
+	}
+
+	// Create user
 	err := user.InsertUser(data.Email, hash.HashPassword(data.Password))
 
 	if err != nil {
