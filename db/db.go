@@ -11,12 +11,21 @@ var db *sql.DB
 
 func getDSN() string {
 	dbConfig := config.GetConfig().Db
-	return fmt.Sprintf("%s:%s@(%s:%d)/%s?parseTime=true", dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.Dbname)
+
+	if dbConfig.Driver == "mysql" {
+		return fmt.Sprintf("%s:%s@(%s:%d)/%s?parseTime=true", dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.Dbname)
+	}
+
+	if dbConfig.Driver == "postgres" {
+		return fmt.Sprintf("postgresql://%s:%s@%s/%s?sslmode=disable", dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Dbname)
+	}
+
+	return ""
 }
 
 func InitDB() error {
 	var err error
-	db, err = sql.Open("mysql", getDSN())
+	db, err = sql.Open(config.GetConfig().Db.Driver, getDSN())
 
 	if err != nil {
 		return err

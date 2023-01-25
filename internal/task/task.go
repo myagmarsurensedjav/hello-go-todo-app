@@ -93,3 +93,21 @@ func ClearDoneTasks(userId int) error {
 	_, err := db.GetDB().Exec("DELETE FROM tasks WHERE user_id = ? and is_done = 1", userId)
 	return err
 }
+
+func GetTasksCountByLast15Days(userId int) (map[string]int, error) {
+	var tasksCountByLast15Days map[string]int
+	rows, err := db.GetDB().Query("SELECT DATE(created_at) as date, COUNT(*) as count FROM tasks WHERE user_id = ? GROUP BY date ORDER BY date DESC LIMIT 15", userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var date string
+		var count int
+		rows.Scan(&date, &count)
+		tasksCountByLast15Days[date] = count
+	}
+
+	return tasksCountByLast15Days, nil
+}

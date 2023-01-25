@@ -12,6 +12,7 @@ type Config struct {
 	}
 
 	Db struct {
+		Driver   string
 		Host     string
 		Port     int
 		User     string
@@ -36,6 +37,7 @@ func InitConfig() error {
 	config.App.Key = os.Getenv("APP_KEY")
 
 	// Database config
+	config.Db.Driver = os.Getenv("DB_DRIVER")
 	config.Db.Host = os.Getenv("DB_HOST")
 	config.Db.Port, _ = strconv.Atoi(os.Getenv("DB_PORT"))
 	config.Db.User = os.Getenv("DB_USER")
