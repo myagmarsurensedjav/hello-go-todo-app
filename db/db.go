@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 	"hello-go-todo-app/internal/config"
 )
 
@@ -25,7 +26,7 @@ func getDSN() string {
 
 func InitDB() error {
 	fmt.Println(getDSN())
-	
+
 	var err error
 	db, err = sql.Open(config.GetConfig().Db.Driver, getDSN())
 
