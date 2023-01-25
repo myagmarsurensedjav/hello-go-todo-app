@@ -18,7 +18,7 @@ func getDSN() string {
 	}
 
 	if dbConfig.Driver == "postgres" {
-		return fmt.Sprintf("postgresql://%s:%s@%s/%s?sslmode=disable", dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Dbname)
+		return fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Dbname)
 	}
 
 	return ""
