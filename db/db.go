@@ -24,6 +24,8 @@ func getDSN() string {
 }
 
 func InitDB() error {
+	fmt.Println(getDSN())
+	
 	var err error
 	db, err = sql.Open(config.GetConfig().Db.Driver, getDSN())
 
