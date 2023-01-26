@@ -9,7 +9,7 @@ type Project struct {
 
 func GetProjects(userId int) ([]Project, error) {
 	var projects []Project
-	rows, err := db.GetDB().Query("SELECT DISTINCT project as Name, count(*) as TasksCount FROM tasks WHERE user_id = ? group by project", userId)
+	rows, err := db.GetDB().Query("SELECT DISTINCT project as Name, count(*) as TasksCount FROM tasks WHERE user_id = $1 group by project", userId)
 
 	if err != nil {
 		return nil, err

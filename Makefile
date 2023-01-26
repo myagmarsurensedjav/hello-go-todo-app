@@ -1,7 +1,7 @@
 migrateup:
-	migrate -path db/migration -database "mysql://root:secret@(127.0.0.1:3306)/go-todo?parseTime=true" -verbose up
+	migrate -path db/migration -database "postgres://myuser:mypassword@localhost/hello_go_todo?sslmode=disable" -verbose up
 
 migratedown:
-	migrate -path db/migration -database "mysql://root:secret@(127.0.0.1:3306)/go-todo?parseTime=true" -verbose down
+	migrate -path db/migration -database "postgres://myuser:mypassword@localhost/hello_go_todo?sslmode=disable" -verbose down
 
 .PHONY: migrateup migratedown
