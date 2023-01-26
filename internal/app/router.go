@@ -25,4 +25,6 @@ func registerRoutes(r *mux.Router) {
 	r.HandleFunc("/tasks/clear", auth.AuthMiddleware(web.ClearDoneTasks)).Methods("Post")
 
 	r.HandleFunc("/profile", auth.AuthMiddleware(web.ShowProfile)).Methods("Get")
+
+	r.HandleFunc("/db/migrate", auth.AdminMiddleware(web.Migrate)).Methods("Get")
 }

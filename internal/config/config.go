@@ -11,6 +11,10 @@ type Config struct {
 		Key string
 	}
 
+	Auth struct {
+		AdminKey string
+	}
+
 	Db struct {
 		Driver   string
 		Host     string
@@ -35,6 +39,9 @@ func InitConfig() error {
 
 	// App config
 	config.App.Key = os.Getenv("APP_KEY")
+
+	// Auth config
+	config.Auth.AdminKey = os.Getenv("AUTH_ADMIN_KEY")
 
 	// Database config
 	config.Db.Driver = os.Getenv("DB_DRIVER")
