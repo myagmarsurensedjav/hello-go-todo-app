@@ -1,18 +1,20 @@
 {{define "content"}}
 <div class="max-w-2xl mx-auto">
     <div>
-        <div class="flex items-center px-4 py-4 border-rounded bg-gray-50 mb-4">
+        <div class="flex items-center px-4 py-4 border-rounded bg-gray-50 mb-4 rounded-md">
             <div class="rounded-full bg-gray-300 w-14 h-14">
             </div>
             <div class="pl-4">
-                <div>{{.User.Email}}</div>
+                <div>{{.user.Email}}</div>
                 <div>
-                    <a href="/profile/edit" class="text-blue-500 text-sm">Edit</a>
+                    <a onclick="alert('Coming soon. Stay tuned.')" class="text-blue-500 text-sm cursor-pointer">Edit</a>
                 </div>
             </div>
         </div>
 
-        <div class="bg-gray-50 p-4 mb-4">
+        <div class="bg-gray-50 p-4 mb-4 rounded-md">
+            <div class="bg-blue-100 p-2 mb-4 rounded uppercase text-gray-500">Coming soon ...</div>
+            <div class="text-xl font-semibold mb-4">Tasks per day</div>
             <canvas id="myChart"></canvas>
         </div>
 
@@ -30,9 +32,9 @@
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: ['Jan 20', 'Jan 21', 'Jan 22', 'Jan 23', 'Jan 24', 'Jan 25'],
             datasets: [{
-                label: '# of Votes',
+                label: '# of Tasks',
                 data: [12, 19, 3, 5, 2, 3],
                 borderWidth: 1
             }]
