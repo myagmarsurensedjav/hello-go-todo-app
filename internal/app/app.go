@@ -22,10 +22,16 @@ func New() *App {
 		Router: mux.NewRouter(),
 	}
 
-	registerRoutes(a.Router)
+	// Web routes
+	web := a.Router.PathPrefix("/").Subrouter()
+	web.Use(csrf.Configure())
+	web.Use(error2.ErrorMessageMiddleware)
+	registerWebRoutes(web)
 
-	a.Router.Use(error2.ErrorMessageMiddleware)
-	a.Router.Use(csrf.Configure())
+	// API routes
+	api := a.Router.PathPrefix("/api/").Subrouter()
+	api.Use(apiMiddleware)
+	registerApiRoutes(api)
 
 	return a
 }

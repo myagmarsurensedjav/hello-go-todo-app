@@ -1,11 +1,13 @@
 package user
 
-import "hello-go-todo-app/db"
+import (
+	"hello-go-todo-app/db"
+)
 
 type User struct {
-	ID       int
-	Email    string
-	Password string
+	ID       int    `json:"id"`
+	Email    string `json:"email"`
+	Password string `json:"-"`
 }
 
 func GetUserByEmail(email string) (User, error) {
@@ -20,7 +22,8 @@ func GetUserById(userId int) (User, error) {
 	return user, err
 }
 
-func InsertUser(email string, password string) error {
-	_, err := db.GetDB().Exec("INSERT INTO users (email, password) VALUES ($1, $2)", email, password)
-	return err
+func InsertUser(email string, password string) (User, error) {
+	var u User
+	err := db.GetDB().QueryRow("INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email, password", email, password).Scan(&u.ID, &u.Email, &u.Password)
+	return u, err
 }

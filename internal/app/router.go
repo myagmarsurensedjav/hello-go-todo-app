@@ -2,11 +2,12 @@ package app
 
 import (
 	"github.com/gorilla/mux"
+	"hello-go-todo-app/internal/api"
 	"hello-go-todo-app/internal/auth"
 	"hello-go-todo-app/internal/web"
 )
 
-func registerRoutes(r *mux.Router) {
+func registerWebRoutes(r *mux.Router) {
 	r.HandleFunc("/", web.ShowLandingPage).Methods("Get")
 
 	r.HandleFunc("/login", web.ShowLoginForm).Methods("Get")
@@ -27,4 +28,11 @@ func registerRoutes(r *mux.Router) {
 	r.HandleFunc("/profile", auth.AuthMiddleware(web.ShowProfile)).Methods("Get")
 
 	r.HandleFunc("/db/migrate", auth.AdminMiddleware(web.Migrate)).Methods("Post")
+}
+
+func registerApiRoutes(r *mux.Router) {
+	r.HandleFunc("/login", api.Login).Methods("Post")
+	r.HandleFunc("/register", api.Register).Methods("Post")
+
+	r.HandleFunc("/tasks", api.GetTasks).Methods("Get")
 }

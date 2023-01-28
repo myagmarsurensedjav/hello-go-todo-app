@@ -1,0 +1,1 @@
+DROP table personal_access_tokens;
